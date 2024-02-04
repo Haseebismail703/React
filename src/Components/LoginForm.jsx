@@ -2,9 +2,13 @@ import React from 'react';
 import { Button, Checkbox, Form, Input } from 'antd';
 
 const onFinishFailed = (errorInfo) => {
-  console.log('Failed:', errorInfo);
+  console.log('Failed:',errorInfo);
+  
+
 };
-const AppLogin = ({lfun}) => (
+
+const AppLogin = ({sslogin}) => (
+  
   <Form
     name="basic"
     labelCol={{
@@ -19,11 +23,11 @@ const AppLogin = ({lfun}) => (
     initialValues={{
       remember: true,
     }}
-    onFinish={lfun}
+    onFinish={sslogin}
     onFinishFailed={onFinishFailed}
     autoComplete="off"
   >
-
+{/* 
 <Form.Item
       name={['user', 'name']}
       label="Name"
@@ -34,18 +38,21 @@ const AppLogin = ({lfun}) => (
       ]}
     >
       <Input />
-    </Form.Item>
+    </Form.Item> */}
+    
 <Form.Item
       name={['email']}
       label="Email"
       rules={[
         {
           type: 'email',
+          required: true,
+          message: 'Please input your Email!'
         },
       ]}
     >
 
-      <Input />
+      <Input  />
     </Form.Item>
 
     <Form.Item

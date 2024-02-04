@@ -23,17 +23,35 @@ const AppSignup = ({sfun}) => (
     onFinishFailed={onFinishFailed}
     autoComplete="off"
   >
+
+<Form.Item
+      name={['user', 'name']}
+      label="Name"
+      rules={[
+        {
+          required: true,
+        },
+      ]}
+    >
+      <Input />
+    </Form.Item>
+
+
+
+
     <Form.Item
       name={['email']}
       label="Email"
       rules={[
         {
           type: 'email',
+          required: true,
         },
       ]}
     >
       <Input />
     </Form.Item>
+
 
     <Form.Item
       label="Password"

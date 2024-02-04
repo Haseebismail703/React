@@ -1,21 +1,33 @@
 import React from 'react'
 import AppSignup from '../Components/SignupForm'
 import { Link, useNavigate } from 'react-router-dom'
-import { auth,createUserWithEmailAndPassword } from '../Config/FirebaseConfig'
+import { auth,createUserWithEmailAndPassword,doc ,db,setDoc } from '../Config/FirebaseConfig'
 
 
 export default function Signup() {
 
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
 
   const sfun = (data) => {
-    // console.log(data)
+    // console.log(data.user)
     createUserWithEmailAndPassword(auth, data.email, data.password)
-      .then((userCredential) => {
+      .then(async(userCredential) => {
         const user = userCredential.user;
+      
+        await setDoc(doc(db, "cities", user.uid), {
+         Name: data.user,
+          email: data.email,
+          password: data.password,
+          
+        });
+
+
+
+
+
         console.log(user)
-        navigate('/')
+        // navigate('/')
       })
       .catch((error) => {
         console.log(error)
