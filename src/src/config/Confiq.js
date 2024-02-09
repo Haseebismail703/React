@@ -1,6 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword ,signOut } from "firebase/auth";
 import {getFirestore, addDoc,getDoc, setDoc,collection,doc,getDocs , updateDoc , deleteDoc } from "firebase/firestore"; 
+import { getStorage, ref , uploadBytes, uploadBytesResumable, getDownloadURL  } from "firebase/storage";
+
+
+
 const firebaseConfig = {
   apiKey: "AIzaSyD0FjVwlw_dnXudam_YmvtG-yipsLD8efg",
   authDomain: "project-1-64704.firebaseapp.com",
@@ -15,6 +19,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore();
+const storage = getStorage();
 export {
     auth,
     createUserWithEmailAndPassword,
@@ -29,5 +34,10 @@ export {
     getAuth,
     updateDoc,
     getDoc
-    , deleteDoc
+    , deleteDoc,
+    storage,
+    ref,
+   uploadBytes , 
+   uploadBytesResumable, 
+   getDownloadURL
 }

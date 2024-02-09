@@ -1,117 +1,142 @@
-import { getAuth, addDoc, getDoc, collection, getDocs, signOut, db, doc, updateDoc, auth, setDoc , deleteDoc } from "../config/Confiq";
-import React, { useEffect, useState } from 'react'
-export default function Creat(prop) {
-    const [title, settitle] = useState('')
-    const [area, setArea] = useState('')
-    const [data, setdata] = useState([''])
-    const [edits, setedits] = useState(true)
-    
+import { getAuth, addDoc, getDoc, collection, getDocs, signOut, db, doc, updateDoc, auth, setDoc, deleteDoc } from "../config/Confiq";
+import React, { useEffect, useState } from 'react';
 
-    let publish = async (e) => {
-        const docRef = await addDoc(collection(db, "blog"), {
-            Title: title,
-            area: area,
-
-        });
-
-        console.log('Added Blog with ID:', docRef.id);
-        await setDoc(docRef, { id: docRef.id }, { merge: true })
-        getdata()
-
-    };
-
-    let getdata = async () => {
+export default function Creat() {
+    const [title, setTitle] = useState('');
+    const [area, setArea] = useState('');
+    const [data, setData] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
+    const [Id, setId] = useState(null);
+   const [go ,setgo] = useState(true)
+   const [V,setV] = useState('')
+    const fetchData = async () => {
         const querySnapshot = await getDocs(collection(db, "blog"));
-        const docs = querySnapshot.docs.map((doc) => doc.data())
-        setdata(docs)
-        console.log(docs);
+        const docs = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setData(docs);
     }
 
     useEffect(() => {
-        getdata()
-    }, [])
+        fetchData();
+    }, []);
 
 
+   
 
-    let edit = (id) => {
-        console.log("Document ID to edit:", id);
-         setedits(false)
-        // Fetch the document
-        getDoc(doc(db, "blog", id))
-            .then((doc) => {
-                if (doc.exists) {
-                    
-                    // Update document with new data
-                    const newData = {
-                        Title: prompt("Enter new Title:", doc.data().Title),
-                        area: prompt("Enter new Area:", doc.data().area),
-                        
-                    };
+    const handlePublish = async () => {
+      if(title=='' || area ==''){
+        alert('no')
+      }else{
 
-                    updateDoc(doc.ref,newData)
-                        .then(() => console.log("Document updated"))
-                        .catch((error) => console.error("Error updating document:", error));
-                } else {
-                    console.log("Document does not exist");
-                }
-            })
-            .catch((error) => console.error("Error fetching document:", error));
+      
+        await addDoc(collection(db, "blog"), {
+            Title: title,
+            Area: area,
+        });
+        fetchData();
+        setTitle('');
+        setArea('');
+
+        }
+        
+
     };
 
-
-    let Delete =async (id)=>{
-        await deleteDoc(doc(db, "blog", id))
-        console.log('Delete');
-        getdata()
+    const handleUpdate = async (id) => {
+        
+        const washingtonRef = doc(db, "blog", id);
+        await updateDoc(washingtonRef, {
+            Title: title,
+            Area: area
+        });
+        fetchData();
+        setIsEditing(false);
+        setId(null);
+        setTitle('');
+        setArea('');
     }
 
+    const handleDelete = async (id) => {
+        await deleteDoc(doc(db, "blog", id));
+        fetchData();
+        setIsEditing(false);
+    };
 
+    let view = (v)=>{
+    // console.log(v.id)
+    setgo(false)
+    setV(v)
+    }
+    let Back = ()=>{
+        setgo(true)
+    }
     return (
         <div>
-      
-            <>
 
-                {/* {edit ? <center>
-                    <h1>Creat now</h1>
-                    <input type="text" placeholder="Title" onChange={(e) => settitle(e.target.value)} /> <br /><br />
-                    <textarea onChange={(e) => setArea(e.target.value)} cols="10" rows="10"></textarea><br /><br />
-                    <button onClick={publish} >Publish</button><br />
-                </center> :
+          { go  ?
 
-                    <center>
-                        <h1>Creat now</h1>
-                        <input type="text" value={data.Title} placeholder="Title" onChange={(e) => settitle(e.target.value)} /> <br /><br />
-                        <textarea value={data.area} onChange={(e) => setArea(e.target.value)} cols="10" rows="10"></textarea><br /><br />
-                        <button onClick={publish} >Publish</button><br />
-                    </center>
+          
 
+            <center>
+                {isEditing ? (
+                    <>
+                    <h1>Update a value </h1><br />
+                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} /> <br /><br />
+                        <textarea value={area} onChange={(e) => setArea(e.target.value)}></textarea><br /><br />
+                        <button onClick={() => handleUpdate(Id)}>Update</button><br /><br />
+                    </>
+                ) : (
+                    <>
+                    <h1>Add a value </h1><br />
+                        <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} /> <br /><br />
+                        <textarea placeholder="Area" value={area} onChange={(e) => setArea(e.target.value)}></textarea><br /><br />
+                        <button onClick={handlePublish}>Publish</button><br /><br />
+                    </>
+                )}
 
-
-                } */}
-
-
-                <center>
-                    <h1>Creat now</h1>
-                    <input type="text" placeholder="Title" onChange={(e) => settitle(e.target.value)} /> <br /><br />
-                    <textarea onChange={(e) => setArea(e.target.value)} cols="10" rows="10"></textarea><br /><br />
-                    <button onClick={publish} >Publish</button><br />
-                </center>
-
-                {
-                    data.length > 0 &&
+                {data.length > 0 ? (
                     <table>
                         <thead>
-                            <tr><th></th></tr>
+                            <tr>
+                                <th>Title</th>
+                                <th>Area</th>
+                                <th>Action</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            {data.map((data, index) => <tr key={index}><td>{data.Title}<button onClick={() => edit(data.id)}>Edit</button><button onClick={()=>Delete(data.id)}>Delete</button> </td></tr>)}
+                            {data.map((item) => (
+                                <tr key={item.id}>
+                                    <td>{item.Title}</td>
+                                    <td>{item.Area}</td>
+                                    <td>
+                                        <button onClick={() => { setTitle(item.Title); setArea(item.Area); setIsEditing(true); setId(item.id) }}>Edit</button>
+                                        <button onClick={() => handleDelete(item.id)}>Delete</button>
+                                        
+                                        
+                                        
+                                        <button onClick={()=>view(item)} >View</button>
+                                         
+
+
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
+                ) : (
+                    <p>No data available</p>
+                )}
+            </center>
+
+               :
+            <>
+             <button onClick={Back} >Back</button>
+               <h1>{V.id}</h1>
+               <h1>{V.Title}</h1>
+               <h1>{V.Area}</h1>
+                </>
                 }
 
 
-            </>
-
         </div>
-    )
+    );
 }

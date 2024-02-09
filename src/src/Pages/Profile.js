@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {getAuth, collection, getDocs, signOut, db, doc, updateDoc,auth, setDoc } from "../config/Confiq";
+import {getAuth, collection, getDocs, signOut, db, doc, updateDoc,auth, setDoc,storage,ref, uploadBytes, uploadBytesResumable, getDownloadURL  } from "../config/Confiq";
 
 
 function Profile() {
@@ -8,7 +8,7 @@ function Profile() {
   const [loading, setloading] = useState(true)
   const[name,setName]= useState('')
   const[email,setEmail]= useState('')
-
+  const [img,setimg] = useState('')
 useEffect(() => {
     let getdata = async () => {
       const querySnapshot = await getDocs(collection(db, "U"));
@@ -20,7 +20,7 @@ useEffect(() => {
     getdata()
   }, [])
 
-  console.log(data);
+  // console.log(data);
   let logout = () => {
     const auth = getAuth();
     signOut(auth).then(() => {
@@ -29,6 +29,12 @@ useEffect(() => {
     
     });
   }
+
+
+ 
+
+
+
 
   let updatedoc=async(i)=>{
     
@@ -44,10 +50,10 @@ useEffect(() => {
     // console.log(auth.currentUser)
     // console.log(data[0].name);
     console.log('Update succesfull'); 
-    }
+  }
+
 
   
- 
   return (
     <>
     <div>
@@ -68,8 +74,9 @@ useEffect(() => {
         <input type="text" placeholder='Name' value={name} onChange={(e)=>setName(e.target.value)} /><br /><br />
         <input type="email" placeholder='Email' value={email} onChange={(e)=>setEmail(e.target.value)} /><br /><br />
         <button onClick={updatedoc} >Update</button><br /><br />
-        <input type="file" /><br /><br />
+        <input type="file"  onChange={(e)=> setimg(e.target.files[0])} /><br /><br />
         <button>Upload</button>
+        
       </center>
     </div></>
   )
