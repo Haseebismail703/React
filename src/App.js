@@ -1,9 +1,11 @@
-import Navbar from './Components/Navbar'
+import logo from './logo.svg';
+import './App.css';
+import Router from './Config/Router'
+
 function App() {
   return (
-    <div>
-     <Navbar/>
-     
+    <div >
+      <Router />
     </div>
   );
 }
